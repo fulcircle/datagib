@@ -1,0 +1,38 @@
+version: "3"
+services:
+  postgres:
+    container_name: datagib_postgres
+    image: postgres:latest
+    hostname: postgres
+    ports:
+      - 5432:5432
+  frontend:
+    container_name: datagib_frontend
+    build:
+      context: ./frontend/datagib
+      dockerfile: Dockerfile
+    hostname: frontend
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend/datagib:/frontend/datagib
+      - /frontend/datagib/node_modules/
+    stdin_open: true
+    tty: true
+  backend:
+    container_name: datagib_backend
+    build:
+      context: ./backend/datagib
+      dockerfile: Dockerfile
+    hostname: backend
+    ports:
+      - 8000:8000
+    volumes:
+      - ./backend/datagib:/backend/datagib
+    depends_on:
+      - postgres
+    environment:
+      WAIT_HOSTS: postgres:5432
+    env_file: .env
+    stdin_open: true
+    tty: true
