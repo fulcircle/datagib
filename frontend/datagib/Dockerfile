@@ -6,8 +6,8 @@ WORKDIR /frontend/
 RUN yarn install
 ENV PATH /frontend/node_modules/.bin:$PATH
 
-COPY . /frontend/topper/
-WORKDIR /frontend/topper/
+COPY . /frontend/datagib/
+WORKDIR /frontend/datagib/
 
 EXPOSE 3000
 
