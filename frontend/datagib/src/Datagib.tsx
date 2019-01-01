@@ -9,7 +9,8 @@ class Datagib extends Component {
   render() {
     return (
       <div className="DatagibApp">
-        {nlp('all commits with message containing hello').nouns().out('txt')}
+        {/*{nlp('all commits with message containing hello').nouns().out('txt')}*/}
+        "Page successfully set up!"
       </div>
     );
   }
