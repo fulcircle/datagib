@@ -1,0 +1,18 @@
+branch-defaults:
+  default:
+    environment: datagib-prod
+    group_suffix: null
+global:
+  application_name: datagib
+  branch: null
+  default_ec2_keyname: vik-datagib
+  default_platform: Docker 18.03.1-ce
+  default_region: us-east-1
+  include_git_submodules: true
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: eb-cli
+  repository: null
+  sc: null
+  workspace_type: Application
