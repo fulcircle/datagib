@@ -1,0 +1,58 @@
+@import "~normalize.css";
+
+body {
+  background-color: #f9f9f9;
+}
+
+.datagib_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  flex-direction: column;
+}
+
+input {
+  border: 0;
+  outline: none;
+}
+
+.datagib_content {
+  width: 50%;
+}
+
+.result_box {
+  display: flex;
+}
+
+.result {
+  margin: 10px 0;
+  display: flex;
+  width: 80%;
+  height: 80px;
+  padding: 10px;
+  background-color: #9d8f8f;
+  justify-content: flex-start;
+  align-items: center;
+  align-self: flex-start;
+  font-size: 30px;
+  color: #f9f9f9;
+}
+
+.query_box {
+  margin-bottom: 40px;
+  background-color: #bcbab8;
+  height: 80px;
+  width: 100%;
+  font-size: 50px;
+  color: #f9f9f9;
+  transition: 0.25s;
+  padding: 10px;
+
+  &:focus, &:hover {
+    height: 90px;
+    background-color: #9d8f8f;
+    box-shadow: 5px 5px 40px #bcbcbc;
+  }
+}
