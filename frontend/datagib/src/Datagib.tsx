@@ -1,7 +1,6 @@
 import React, {ChangeEvent, Component} from 'react';
 export var nlp = require('compromise');
 import './Datagib.scss';
-import {string} from "prop-types";
 
 
 type State = {
@@ -49,7 +48,6 @@ class Datagib extends Component<{}, State> {
             this.setState({value: newText, results: ["RESULT", "RESULT", "RESULT", "RESULT"]});
         }
     }
-
 
 
     render() {
