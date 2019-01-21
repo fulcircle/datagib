@@ -54,6 +54,19 @@ class GitHubCommitSearchParams:
         else:
             raise ValueError("Attempting to call get_author() when we have no author")
 
+    @staticmethod
+    def from_dict(dict_data):
+        p = GitHubCommitSearchParams()
+        for key in dict_data:
+            if key == 'since' or key == 'until':
+                setattr(p, key, maya.parse(dict_data[key]).datetime())
+            else:
+                setattr(p, key, dict_data[key])
+
+        return p
+
+
+
 
 class GitHubCommitSearchQuery:
 
