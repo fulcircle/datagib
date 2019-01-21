@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@types/es6-promise": "^3.3.0",
     "@types/jest": "23.3.10",
     "@types/node": "10.12.14",
     "@types/react": "16.7.17",
     "@types/react-dom": "16.0.11",
     "compromise": "^11.12.4",
+    "es6-promise": "^4.2.5",
     "node-sass": "^4.11.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
@@ -28,5 +30,6 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "proxy": "http://datagib-backend:8000"
 }

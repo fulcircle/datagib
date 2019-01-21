@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 
 
-# @csrf_exempt
+@csrf_exempt
 def commit_query(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -15,5 +15,5 @@ def commit_query(request):
         json_commits = [commit.__dict__ for commit in commits]
         return JsonResponse({'commits': json_commits})
     else:
-        return HttpResponseNotAllowed(permitted_methods=['POST'])
+        return HttpResponseNotAllowed(permitted_methods=['GET'])
 

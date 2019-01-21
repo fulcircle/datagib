@@ -1,42 +1,40 @@
 version: "3"
 services:
-  datagib_postgres:
-    container_name: datagib_postgres
+  datagib-postgres:
+    container_name: datagib-postgres
     image: postgres:latest
-    hostname: datagib_postgres
+    hostname: datagib-postgres
     environment:
       POSTGRES_USER: 'postgres'
       POSTGRES_PASSWORD: 'pass'
     ports:
       - 5432:5432
-  datagib_frontend:
-    container_name: datagib_frontend
+  datagib-frontend:
+    container_name: datagib-frontend
     build:
       context: ./frontend/datagib
       dockerfile: Dockerfile
-    hostname: datagib_frontend
+    hostname: datagib-frontend
     ports:
       - 3000:3000
     volumes:
       - ./frontend/datagib:/frontend/datagib
       - /frontend/datagib/node_modules/
-    environment:
-      CHOKIDAR_USEPOLLING: 'true'
     stdin_open: true
     tty: true
-  datagib_backend:
-    container_name: datagib_backend
+  datagib-backend:
+    container_name: datagib-backend
     build:
       context: ./backend/datagib
       dockerfile: Dockerfile
-    hostname: datagib_backend
+    hostname: datagib-backend
     ports:
       - 8000:8000
     volumes:
       - ./backend/datagib:/backend/datagib
     depends_on:
-      - datagib_postgres
+      - datagib-postgres
     environment:
-      WAIT_HOSTS: datagib_postgres:5432
+      WAIT_HOSTS: datagib-postgres:5432
     stdin_open: true
     tty: true

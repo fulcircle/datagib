@@ -1,21 +1,23 @@
 import React, {ChangeEvent, Component} from 'react';
 export var nlp = require('compromise');
 import './Datagib.scss';
+import {Api} from "./api/Api";
+import {Commit} from "./data/commit.interface";
 
 
 type State = {
-    results: Array<string>,
+    commits: Array<Commit>,
     value: string,
     typing: boolean,
     typingTimeout: any
-
+    searching: boolean
 
 }
 class Datagib extends Component<{}, State> {
 
     constructor(props: any) {
         super(props);
-        this.state = {results: [], value: "", typing: false, typingTimeout: 0};
+        this.state = {commits: [], value: "", typing: false, typingTimeout: 0, searching: false};
 
     }
 
@@ -40,21 +42,28 @@ class Datagib extends Component<{}, State> {
 
     }
 
-    dispatchSearch(oldText: string, newText:string) {
+    async dispatchSearch(oldText: string, newText:string) {
+        if (this.state.searching) {
+            return
+        }
+
         if (newText === null || newText === "") {
-            this.setState({value: newText, results: []})
+            this.setState({value: newText, commits: [], searching: false})
 
         } else if (oldText === "" || oldText === null || oldText !== newText) {
-            this.setState({value: newText, results: ["RESULT", "RESULT", "RESULT", "RESULT"]});
+            this.setState({searching: true}, async () => {
+                let commit_data = await Api.search({author_username: 'fulcircle', repo: 'fulcircle/topper'});
+                this.setState({value: newText, commits: commit_data.commits, searching: false});
+            });
         }
     }
 
 
     render() {
 
-        let resultElements = this.state.results.map((result: string, idx: number) => {
+        let commitElements = this.state.commits.slice(0,5).map((commit: Commit, idx: number) => {
             return <div className="result" key={idx}>
-                result
+                {commit.date}: {commit.message}
             </div>
         });
 
@@ -63,8 +72,16 @@ class Datagib extends Component<{}, State> {
                 {/*{nlp('all commits with message containing hello').nouns().out('txt')}*/}
                 <div className="datagib_container">
                     <div className="datagib_content">
-                        <input className="query_box" value={this.state.value} onChange={(event) => this.onChange(event)}/>
-                        {resultElements}
+                        <input disabled={this.state.searching} className="query_box" value={this.state.value} onChange={(event) => this.onChange(event)}/>
+                        {this.state.searching &&
+                        <div className="spinner">
+                            <div className="rect1"></div>
+                            <div className="rect2"></div>
+                            <div className="rect3"></div>
+                            <div className="rect4"></div>
+                            <div className="rect5"></div>
+                        </div>}
+                        {!this.state.searching && commitElements}
                     </div>
                 </div>
             </div>

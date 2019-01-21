@@ -15,7 +15,7 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'pass',
-        'HOST': 'datagib_postgres',
+        'HOST': 'datagib-postgres',
         'PORT': '5432',
     }
 }
