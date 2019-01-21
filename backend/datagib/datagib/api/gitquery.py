@@ -12,15 +12,25 @@ import maya
 
 class Commit:
 
-    user_avatar_url: str = None
-    author_name: str = None
-    author_email: str = None
-    message: str = None
     url: str = None
+
+    sha: str = None
+
+    message: str = None
+
     date: datetime.datetime = None
+
     repo: str = None
     repo_url: str = None
 
+    author_name: str = None
+    author_email: str = None
+
+    user_name: str = None
+    user_email: str = None
+    user_login: str = None
+    user_url: str = None
+    user_avatar_url: str = None
 
 class GitHubCommitSearchParams:
 
@@ -86,30 +96,34 @@ class GitHubCommitSearchQuery:
         commit: PyCommit
         result_commits = github_repo.get_commits(**kwargs)
         commits: List[Commit] = []
-        # TODO: Assume user and author are the same since we use the users's avatar url for the author's commit
         for commit in result_commits:
+            github_user: PyGitNamedUser = commit.author
+
             git_commit: PyGitCommit = commit.commit
-            commit_author: PyGitAuthor = commit.committer
-            git_commit_author: PyGitNamedUser = git_commit.committer
+            commit_author: PyGitAuthor = git_commit.author
+
             c = Commit()
             c.message = git_commit.message
             c.author_email = commit_author.email
             c.author_name = commit_author.name
-            c.user_avatar_url = git_commit_author.avatar_url
+            c.user_name = github_user.name
+            c.user_email = github_user.email
+            c.user_url = github_user.url
+            c.user_avatar_url = github_user.avatar_url
             c.url = git_commit.url
-            c.date = commit_author.date
             c.repo = github_repo.name
             c.repo_url = github_repo.url
+            c.date = commit_author.date
 
-            commits.append(commit)
+            commits.append(c)
 
         return commits
 
     # TODO: Assumes only a login, not email
     def get_user_commits(self, username: str, since: datetime.datetime=None, until: datetime.datetime=None):
-        user: PyGitNamedUser = self.github.get_user(username)
+        git_user: PyGitNamedUser = self.github.get_user(username)
 
-        events = user.get_events()
+        events = git_user.get_events()
         event: PyGitEvent
         push_events = [event for event in events if event.type == 'PushEvent']
 
@@ -124,8 +138,6 @@ class GitHubCommitSearchQuery:
             if since and not event.created_at >= since or until and not event.created_at <= until:
                 continue
             # TODO: Only a maximum of 20 commits
-            # TODO: Assume commit author and user are the same because we use the user's avatar url for the author's commit
-            # TODO: Might be that this user's push events push commit by someone else
             # TODO: We use the push event created date for the commit date, probably wrong, maybe better to look up the commits directly by hash and get date from that (?)
             if 'commits' in event.payload:
                 for commit in event.payload['commits']:
@@ -135,7 +147,11 @@ class GitHubCommitSearchQuery:
                     c.author_name = commit['author']['name']
                     c.message = commit['message']
                     c.url = commit['url']
-                    c.user_avatar_url = user.avatar_url
+                    c.user_email = git_user.email
+                    c.user_name = git_user.name
+                    c.user_login = git_user.login
+                    c.user_avatar_url = git_user.avatar_url
+                    c.user_url = git_user.url
                     c.repo = repo.name
                     c.repo_url = repo.url
 
