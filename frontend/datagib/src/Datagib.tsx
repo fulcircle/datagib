@@ -1,5 +1,4 @@
 import React, {ChangeEvent, Component} from 'react';
-export var nlp = require('compromise');
 import './Datagib.scss';
 import {Api} from "./api/Api";
 import {Commit} from "./data/Commit.interface";
@@ -53,9 +52,10 @@ class Datagib extends Component<{}, State> {
         } else if (oldText === "" || oldText === null || oldText !== newText) {
             this.setState({searching: true}, async () => {
                 let query = new QueryParser(newText);
+                let data = {...query.authorInfo, ...query.repoInfo, ...query.dateInfo};
 
                 try {
-                    let commit_data = await Api.search(query.repoInfo);
+                    let commit_data = await Api.search(data);
                     this.setState({commits: commit_data.commits, searching: false});
                 } catch(e) {
                     alert("Error searching");

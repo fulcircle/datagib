@@ -1,4 +1,11 @@
-export interface CommitterInfo {
+import chrono from 'chrono-node/chrono';
+
+export interface DateInfo {
+    since?: Date,
+    until?: Date
+}
+
+export interface AuthorInfo {
     author_username?: string;
     author_email?: string;
 }
@@ -24,25 +31,59 @@ export class QueryParser {
         this.query = query;
     }
 
-    get committerInfo(): CommitterInfo {
-        let email;
+    get authorInfo(): AuthorInfo {
 
-        let matches = this.emailRegexp.exec(this.query);
-        if (matches) {
-            email = matches[0]
+        let authorInfo: AuthorInfo = {};
+
+        let author_email = this._matches(this.emailRegexp);
+
+        if (author_email) {
+            authorInfo = {author_email: author_email}
         }
 
-        return {
-            author_username: "",
-            author_email: this._matches(this.emailRegexp)
-        }
+        return authorInfo;
 
     }
 
     get repoInfo(): RepoInfo {
-        console.log(this._matches(this.repoRegexp, 2));
-        return {
-            repo: this._matches(this.repoRegexp, 2)
+        let repoInfo: RepoInfo = {};
+
+        let repo = this._matches(this.repoRegexp, 2);
+
+        if(repo) {
+            repoInfo = {repo: repo};
+        }
+
+        return repoInfo
+    }
+
+    get dateInfo(): DateInfo {
+        let parsed = chrono.parse(this.query);
+
+        if (parsed.length > 0) {
+            let dateInfo: DateInfo = { since: parsed[0].start.date() };
+
+            let until;
+            if (parsed.hasOwnProperty('end')) {
+                until = parsed[0].end.date();
+            } else if (parsed.length > 1) {
+                until = parsed[1].start.date();
+            }
+
+            if (until) {
+                // @ts-ignore
+                if (until < dateInfo.since) {
+                    dateInfo.until = dateInfo.since;
+                    dateInfo.since = until;
+                } else {
+                    dateInfo.until = until;
+                }
+            }
+
+            return dateInfo;
+
+        } else {
+            return {};
         }
     }
 
