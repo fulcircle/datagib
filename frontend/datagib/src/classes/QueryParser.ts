@@ -17,12 +17,17 @@ export interface RepoInfo {
 export class QueryParser {
 
     query: string;
+
     repoRegexp = new RegExp(
-        /(\brepo\s+)(\w+\/?\w+)/i
+        /\brepo\s+((?:\w|\d|-|_)+\/?\w+)/i
     );
 
     emailRegexp = new RegExp(
         /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+
+    userRegexp = new RegExp(
+        /\b(?:user(?:name)?)\s+((?:\w|\d|-|_)+)/i
     );
 
 
@@ -33,13 +38,12 @@ export class QueryParser {
 
     get authorInfo(): AuthorInfo {
 
-        let authorInfo: AuthorInfo = {};
+        let authorInfo: AuthorInfo;
 
+        let author_username = this._matches(this.userRegexp, 1);
         let author_email = this._matches(this.emailRegexp);
 
-        if (author_email) {
-            authorInfo = {author_email: author_email}
-        }
+        authorInfo = {author_email: author_email, author_username: author_username};
 
         return authorInfo;
 
@@ -48,7 +52,7 @@ export class QueryParser {
     get repoInfo(): RepoInfo {
         let repoInfo: RepoInfo = {};
 
-        let repo = this._matches(this.repoRegexp, 2);
+        let repo = this._matches(this.repoRegexp, 1);
 
         if(repo) {
             repoInfo = {repo: repo};
