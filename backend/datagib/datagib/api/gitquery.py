@@ -10,6 +10,7 @@ from typing import List
 import datetime
 import maya
 
+
 class Commit:
 
     url: str = None
@@ -32,12 +33,13 @@ class Commit:
     user_url: str = None
     user_avatar_url: str = None
 
+
 class GitHubCommitSearchParams:
 
     author_email: str = None
     author_username: str = None
     repo: str = None
-    since: datetime.datetime  = None
+    since: datetime.datetime = None
     until: datetime.datetime = None
 
     def has_author(self):
@@ -66,8 +68,6 @@ class GitHubCommitSearchParams:
         return p
 
 
-
-
 class GitHubCommitSearchQuery:
 
     def __init__(self):
@@ -88,7 +88,6 @@ class GitHubCommitSearchQuery:
 
         elif not gitquery_params.has_repo() and gitquery_params.has_author():
             return self.get_user_commits(gitquery_params.get_author(), gitquery_params.since, gitquery_params.until)
-
 
     def get_repo_commits(self, repo: str, since: datetime.datetime=None, until: datetime.datetime=None) -> List[Commit]:
         return self._get_repo_commits(repo, since, until)

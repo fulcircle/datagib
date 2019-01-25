@@ -2,14 +2,14 @@ import React, {ChangeEvent, Component} from 'react';
 export var nlp = require('compromise');
 import './Datagib.scss';
 import {Api} from "./api/Api";
-import {Commit} from "./data/commit.interface";
+import {Commit} from "./data/Commit.interface";
+import {QueryParser} from "./classes/QueryParser";
 
 
 type State = {
     commits: Array<Commit>,
+    oldValue: string,
     value: string,
-    typing: boolean,
-    typingTimeout: any
     searching: boolean
 
 }
@@ -17,7 +17,7 @@ class Datagib extends Component<{}, State> {
 
     constructor(props: any) {
         super(props);
-        this.state = {commits: [], value: "", typing: false, typingTimeout: 0, searching: false};
+        this.state = {commits: [], oldValue: "", value: "", searching: false};
 
     }
 
@@ -25,21 +25,21 @@ class Datagib extends Component<{}, State> {
     }
 
     onChange(event: ChangeEvent<HTMLInputElement>) {
-        if (this.state.typingTimeout) {
-            clearTimeout(this.state.typingTimeout);
-        }
 
         const oldText = this.state.value;
         const newText = event.target.value;
 
         this.setState({
-            value: event.target.value,
-            typing: false,
-            typingTimeout: setTimeout(() => {
-                this.dispatchSearch(oldText, newText)
-            }, 500)
+            oldValue: oldText,
+            value: newText,
         });
 
+    }
+
+    onKeyPress(event: KeyboardEvent) {
+        if (event.key === 'Enter') {
+            this.dispatchSearch(this.state.oldValue, this.state.value)
+        }
     }
 
     async dispatchSearch(oldText: string, newText:string) {
@@ -52,8 +52,16 @@ class Datagib extends Component<{}, State> {
 
         } else if (oldText === "" || oldText === null || oldText !== newText) {
             this.setState({searching: true}, async () => {
-                let commit_data = await Api.search({author_username: 'fulcircle', repo: 'fulcircle/topper'});
-                this.setState({value: newText, commits: commit_data.commits, searching: false});
+                let query = new QueryParser(newText);
+
+                try {
+                    let commit_data = await Api.search(query.repoInfo);
+                    this.setState({commits: commit_data.commits, searching: false});
+                } catch(e) {
+                    alert("Error searching");
+                    this.setState({searching: false})
+                }
+
             });
         }
     }
@@ -72,7 +80,13 @@ class Datagib extends Component<{}, State> {
                 {/*{nlp('all commits with message containing hello').nouns().out('txt')}*/}
                 <div className="datagib_container">
                     <div className="datagib_content">
-                        <input disabled={this.state.searching} className="query_box" value={this.state.value} onChange={(event) => this.onChange(event)}/>
+                        <input
+                            disabled={this.state.searching}
+                            className="query_box"
+                            value={this.state.value}
+                            onChange={(event) => this.onChange(event)}
+                            onKeyPress={(event: any) => this.onKeyPress(event)}
+                        />
                         {this.state.searching &&
                         <div className="spinner">
                             <div className="rect1"></div>

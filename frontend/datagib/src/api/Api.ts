@@ -1,5 +1,5 @@
-import {CommitData} from "../data/commit.interface";
-import {SearchParams} from "../data/search_params.interface";
+import {CommitData} from "../data/Commit.interface";
+import {SearchParams} from "../data/SearchParams.interface";
 
 export class Api {
 
