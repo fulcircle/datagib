@@ -15,6 +15,10 @@ class NoUserFoundError(Exception):
     pass
 
 
+class NoRepositoryFoundError(Exception):
+    pass
+
+
 class Commit:
 
     url: str = None
@@ -104,7 +108,7 @@ class GitHubCommitSearchQuery:
         return self._get_repo_commits(repo, since, until, author)
 
     def _get_repo_commits(self, repo: str, since: datetime.datetime=None, until: datetime.datetime=None, author: str=None) -> List[Commit]:
-        github_repo: PyGitRepository = self.github.get_repo(repo)
+        github_repo: PyGitRepository = self._find_repo(repo)
         kwargs = {}
         if since:
             kwargs['since'] = since
@@ -139,7 +143,6 @@ class GitHubCommitSearchQuery:
 
         return commits
 
-    # Assumes only a login, not email
     def get_user_commits(self, username: str or PyGitNamedUser, since: datetime.datetime=None, until: datetime.datetime=None):
         if isinstance(username, PyGitNamedUser):
             git_user = username
@@ -189,8 +192,12 @@ class GitHubCommitSearchQuery:
         else:
             raise NoUserFoundError(f'User with e-mail {email} not found')
 
-    def _find_repo(self, email: str):
-        pass
+    def _find_repo(self, repo: str):
+        results = self.github.search_repositories(f'{repo}')
+        if results.totalCount > 0:
+            return results[0]
+        else:
+            raise NoRepositoryFoundError(f'Repository with name {repo} not found')
 
     def _get_date_string_from_datetime(self, date: datetime.datetime):
         return maya.MayaDT.from_datetime(date).iso8601().split('T', 1)[0]
