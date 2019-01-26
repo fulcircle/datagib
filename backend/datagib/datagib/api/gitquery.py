@@ -11,6 +11,10 @@ import datetime
 import maya
 
 
+class NoUserFoundError(Exception):
+    pass
+
+
 class Commit:
 
     url: str = None
@@ -87,7 +91,11 @@ class GitHubCommitSearchQuery:
             return self.get_repo_commits(gitquery_params.repo, gitquery_params.since, gitquery_params.until)
 
         elif not gitquery_params.has_repo() and gitquery_params.has_author():
-            return self.get_user_commits(gitquery_params.get_author(), gitquery_params.since, gitquery_params.until)
+            if gitquery_params.author_username is not None:
+                return self.get_user_commits(gitquery_params.author_username, gitquery_params.since, gitquery_params.until)
+            elif gitquery_params.author_email is not None:
+                user = self._get_user_from_email(gitquery_params.author_email)
+                return self.get_user_commits(user, gitquery_params.since, gitquery_params.until)
 
     def get_repo_commits(self, repo: str, since: datetime.datetime=None, until: datetime.datetime=None) -> List[Commit]:
         return self._get_repo_commits(repo, since, until)
@@ -131,9 +139,12 @@ class GitHubCommitSearchQuery:
 
         return commits
 
-    # TODO: Assumes only a login, not email
-    def get_user_commits(self, username: str, since: datetime.datetime=None, until: datetime.datetime=None):
-        git_user: PyGitNamedUser = self.github.get_user(username)
+    # Assumes only a login, not email
+    def get_user_commits(self, username: str or PyGitNamedUser, since: datetime.datetime=None, until: datetime.datetime=None):
+        if isinstance(username, PyGitNamedUser):
+            git_user = username
+        else:
+            git_user: PyGitNamedUser = self.github.get_user(username)
 
         events = git_user.get_events()
         event: PyGitEvent
@@ -173,6 +184,13 @@ class GitHubCommitSearchQuery:
 
     def _get_user_from_email(self, email: str):
         results = self.github.search_users(f'{email} in:email')
+        if results.totalCount > 0:
+            return results[0]
+        else:
+            raise NoUserFoundError(f'User with e-mail {email} not found')
+
+    def _find_repo(self, email: str):
+        pass
 
     def _get_date_string_from_datetime(self, date: datetime.datetime):
         return maya.MayaDT.from_datetime(date).iso8601().split('T', 1)[0]

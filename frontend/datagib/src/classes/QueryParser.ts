@@ -1,5 +1,4 @@
 import chrono from 'chrono-node/chrono';
-import moment from 'moment';
 
 export interface DateInfo {
     since?: Date,

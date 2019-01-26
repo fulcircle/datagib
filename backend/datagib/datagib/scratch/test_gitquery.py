@@ -6,8 +6,6 @@ def run_search():
     params = GitHubCommitSearchParams()
 
     params.author_username = 'vsunkavalli@gmail.com'
-    params.repo = 'fulcircle/datagib'
-    params.since = datetime.now() - timedelta(days=30)
 
     return gq.get_commits(params)
 
