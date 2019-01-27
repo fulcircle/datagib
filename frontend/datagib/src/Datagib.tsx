@@ -69,9 +69,25 @@ class Datagib extends Component<{}, State> {
 
     render() {
 
-        let commitElements = this.state.commits.slice(0,5).map((commit: Commit, idx: number) => {
+        let commitElements = this.state.commits.slice(0,30).map((commit: Commit, idx: number) => {
+            let name;
+            if (commit.user_login) {
+                name = commit.user_login;
+            } else if (commit.author_name) {
+                name = commit.author_name;
+            } else if (commit.author_email) {
+                name = commit.author_email;
+            }
             return <div className="result" key={idx}>
-                {commit.date}: {commit.message}
+                <img className="avatar" src={commit.user_avatar_url}/>
+                <div className="result__commit">
+                    <div className="result__message">
+                        {commit.message}
+                    </div>
+                    <div className="result__commit_info">
+                        {name} committed to <a href={commit.repo_url} target="_blank">{commit.repo}</a> on {commit.date}
+                    </div>
+                </div>
             </div>
         });
 

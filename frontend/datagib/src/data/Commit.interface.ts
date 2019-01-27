@@ -17,8 +17,6 @@ export interface Commit {
     author_name: string;
     author_email: string;
 
-    user_name: string;
-    user_email: string;
     user_login: string;
     user_url: string;
     user_avatar_url: string;

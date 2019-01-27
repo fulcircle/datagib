@@ -78,6 +78,8 @@ class GitHubCommitSearchParams:
 
 class GitHubCommitSearchQuery:
 
+    LIMIT_RESULTS = 50
+
     def __init__(self):
         self.github = Github(settings.GITHUB_ACCESS_TOKEN)
 
@@ -120,7 +122,7 @@ class GitHubCommitSearchQuery:
         commit: PyCommit
         result_commits = github_repo.get_commits(**kwargs)
         commits: List[Commit] = []
-        for commit in result_commits:
+        for commit in result_commits[0:50]:
             github_user: PyGitNamedUser = commit.author
 
             git_commit: PyGitCommit = commit.commit
@@ -130,10 +132,11 @@ class GitHubCommitSearchQuery:
             c.message = git_commit.message
             c.author_email = commit_author.email
             c.author_name = commit_author.name
-            c.user_name = github_user.name
-            c.user_email = github_user.email
-            c.user_url = github_user.url
-            c.user_avatar_url = github_user.avatar_url
+
+            if github_user:
+                c.user_url = github_user.url
+                c.user_avatar_url = github_user.avatar_url
+
             c.url = git_commit.url
             c.repo = github_repo.name
             c.repo_url = github_repo.url
