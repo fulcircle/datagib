@@ -27,7 +27,7 @@ export class QueryParser {
     );
 
     userRegexp = new RegExp(
-        /\b(?:user(?:name)?)\s+((?:\w|\d|-|_)+)/i
+        /\b(?:(?:user(?:name)?)|(?:by))\s+((?:\w|\d|-|_)+)/i
     );
 
 
@@ -68,7 +68,7 @@ export class QueryParser {
             let dateInfo: DateInfo = { since: parsed[0].start.date() };
 
             let until;
-            if (parsed.hasOwnProperty('end')) {
+            if (parsed[0].hasOwnProperty('end')) {
                 until = parsed[0].end.date();
             } else if (parsed.length > 1) {
                 until = parsed[1].start.date();

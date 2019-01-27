@@ -150,7 +150,7 @@ class GitHubCommitSearchQuery:
         else:
             git_user: PyGitNamedUser = self.github.get_user(username)
 
-        events = git_user.get_events()
+        events = git_user.get_events().get_page(0)
         event: PyGitEvent
         push_events = [event for event in events if event.type == 'PushEvent']
 
@@ -175,9 +175,9 @@ class GitHubCommitSearchQuery:
                     c.user_name = git_user.name
                     c.user_login = git_user.login
                     c.user_avatar_url = git_user.avatar_url
-                    c.user_url = git_user.url
+                    c.user_url = git_user.html_url
                     c.repo = repo.name
-                    c.repo_url = repo.url
+                    c.repo_url = repo.html_url
 
                     commits.append(c)
 

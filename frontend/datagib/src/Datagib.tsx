@@ -93,9 +93,14 @@ class Datagib extends Component<{}, State> {
 
         return (
             <div className="DatagibApp">
-                {/*{nlp('all commits with message containing hello').nouns().out('txt')}*/}
                 <div className="datagib_container">
                     <div className="datagib_content">
+                        <div className="title">
+                            datagib
+                        </div>
+                        <div className="subtitle">
+                            search for Github commits using English
+                        </div>
                         <input
                             disabled={this.state.searching}
                             className="query_box"
@@ -103,6 +108,15 @@ class Datagib extends Component<{}, State> {
                             onChange={(event) => this.onChange(event)}
                             onKeyPress={(event: any) => this.onKeyPress(event)}
                         />
+                        <div className="subtext">
+                            ex: 'commits to repo datagib'
+                        </div>
+                        <div className="subtext">
+                            ex: 'commits by fulcircle since dec 2018'
+                        </div>
+                        <div className="subtext">
+                            ex: 'commits by fulcircle to repo datagib from dec 2018 to jan 2019'
+                        </div>
                         {this.state.searching &&
                         <div className="spinner">
                             <div className="rect1"></div>
