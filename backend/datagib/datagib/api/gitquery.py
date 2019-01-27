@@ -153,22 +153,19 @@ class GitHubCommitSearchQuery:
         event: PyGitEvent
         push_events = [event for event in events if event.type == 'PushEvent']
 
-        if since:
-            push_events = [event for event in events if event.created_at >= since]
-        if until:
-            push_events = [event for event in events if event.created_at <= until]
-
         commits = []
         for event in push_events:
+            # Convert to UTC since event.created_at returned by PyGithub is a naive time
+            created_at = maya.MayaDT.from_datetime(event.created_at).datetime()
             repo: PyGitRepository = event.repo
-            if since and not event.created_at >= since or until and not event.created_at <= until:
+            if since and not created_at >= since or until and not created_at <= until:
                 continue
             # TODO: Only a maximum of 20 commits
             # TODO: We use the push event created date for the commit date, probably wrong, maybe better to look up the commits directly by hash and get date from that (?)
             if 'commits' in event.payload:
                 for commit in event.payload['commits']:
                     c = Commit()
-                    c.date = event.created_at
+                    c.date = created_at
                     c.author_email = commit['author']['email']
                     c.author_name = commit['author']['name']
                     c.message = commit['message']
