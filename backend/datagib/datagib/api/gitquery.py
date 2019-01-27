@@ -78,8 +78,6 @@ class GitHubCommitSearchParams:
 
 class GitHubCommitSearchQuery:
 
-    LIMIT_RESULTS = 50
-
     def __init__(self):
         self.github = Github(settings.GITHUB_ACCESS_TOKEN)
 
@@ -120,9 +118,9 @@ class GitHubCommitSearchQuery:
             kwargs['author'] = author
 
         commit: PyCommit
-        result_commits = github_repo.get_commits(**kwargs)
+        result_commits = github_repo.get_commits(**kwargs).get_page(0)
         commits: List[Commit] = []
-        for commit in result_commits[0:50]:
+        for commit in result_commits:
             github_user: PyGitNamedUser = commit.author
 
             git_commit: PyGitCommit = commit.commit
