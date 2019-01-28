@@ -1,4 +1,4 @@
-import React, {ChangeEvent, Component} from 'react';
+import React, {ChangeEvent, Component, ReactElement, ReactNode} from 'react';
 import './Datagib.scss';
 import {Api} from "./api/Api";
 import {Commit} from "./data/Commit.interface";
@@ -41,6 +41,21 @@ class Datagib extends Component<{}, State> {
         }
     }
 
+    onKeyUp(event: KeyboardEvent) {
+        if (event.key === 'Backspace') {
+            this.setState((prevState) => {
+
+                let commits = prevState.commits;
+                if (prevState.value === "") {
+                    commits = [];
+                }
+                return {
+                    commits: commits
+                }
+            });
+        }
+    }
+
     async dispatchSearch(oldText: string, newText:string) {
         if (this.state.searching) {
             return
@@ -58,38 +73,45 @@ class Datagib extends Component<{}, State> {
                     let commit_data = await Api.search(data);
                     this.setState({commits: commit_data.commits, searching: false});
                 } catch(e) {
-                    alert("Error searching");
-                    this.setState({searching: false})
+                    this.setState({commits: [], searching: false})
                 }
 
             });
         }
     }
 
+    get showingResults() {
+        return this.state.commits.length > 0;
+    }
+
 
     render() {
 
-        let commitElements = this.state.commits.slice(0,30).map((commit: Commit, idx: number) => {
-            let name;
-            if (commit.user_login) {
-                name = commit.user_login;
-            } else if (commit.author_name) {
-                name = commit.author_name;
-            } else if (commit.author_email) {
-                name = commit.author_email;
-            }
-            return <div className="result" key={idx}>
-                <img className="avatar" src={commit.user_avatar_url}/>
-                <div className="result__commit">
-                    <div className="result__message">
-                        {commit.message}
-                    </div>
-                    <div className="result__commit_info">
-                        {name} committed to <a href={commit.repo_url} target="_blank">{commit.repo}</a> on {commit.date}
+        let commitElements: Array<ReactNode> = [];
+        if (this.state.value !== "") {
+            commitElements = this.state.commits.slice(0, 30).map((commit: Commit, idx: number) => {
+                let name;
+                if (commit.user_login) {
+                    name = commit.user_login;
+                } else if (commit.author_name) {
+                    name = commit.author_name;
+                } else if (commit.author_email) {
+                    name = commit.author_email;
+                }
+                return <div className="result" key={idx}>
+                    <img className="avatar" src={commit.user_avatar_url}/>
+                    <div className="result__commit">
+                        <div className="result__message">
+                            {commit.message}
+                        </div>
+                        <div className="result__commit_info">
+                            {name} committed to <a href={commit.repo_url}
+                                                   target="_blank">{commit.repo}</a> on {commit.date}
+                        </div>
                     </div>
                 </div>
-            </div>
-        });
+            });
+        }
 
         return (
             <div className="DatagibApp">
@@ -107,16 +129,20 @@ class Datagib extends Component<{}, State> {
                             value={this.state.value}
                             onChange={(event) => this.onChange(event)}
                             onKeyPress={(event: any) => this.onKeyPress(event)}
+                            onKeyUp={(event: any) => this.onKeyUp(event)}
                         />
-                        <div className="subtext">
-                            ex: 'commits to repo datagib'
-                        </div>
-                        <div className="subtext">
-                            ex: 'commits by fulcircle since dec 2018'
-                        </div>
-                        <div className="subtext">
-                            ex: 'commits by fulcircle to repo datagib from dec 2018 to jan 2019'
-                        </div>
+                        {!this.showingResults && !this.state.searching &&
+                        <div className="subtext_container">
+                            <div className="subtext">
+                                ex: 'commits to repo datagib'
+                            </div>
+                            <div className="subtext">
+                                ex: 'commits by fulcircle in the last 3 months'
+                            </div>
+                            <div className="subtext">
+                                ex: 'commits by fulcircle to repo datagib from dec 2018 to jan 2019'
+                            </div>
+                        </div>}
                         {this.state.searching &&
                         <div className="spinner">
                             <div className="rect1"></div>
