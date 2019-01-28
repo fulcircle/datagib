@@ -42,7 +42,6 @@ export class QueryParser {
 
         let author_username = this._matches(this.userRegexp, 1);
         let author_email = this._matches(this.emailRegexp);
-        console.log(author_email);
 
         authorInfo = {author_email: author_email, author_username: author_username};
 
