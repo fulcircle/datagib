@@ -95,11 +95,11 @@ class GitHubCommitSearchQuery:
             return self.get_repo_commits(gitquery_params.repo, gitquery_params.since, gitquery_params.until)
 
         elif not gitquery_params.has_repo() and gitquery_params.has_author():
-            if gitquery_params.author_username is not None:
-                return self.get_user_commits(gitquery_params.author_username, gitquery_params.since, gitquery_params.until)
-            elif gitquery_params.author_email is not None:
+            if gitquery_params.author_email is not None:
                 user = self._get_user_from_email(gitquery_params.author_email)
                 return self.get_user_commits(user, gitquery_params.since, gitquery_params.until)
+            elif gitquery_params.author_username is not None:
+                return self.get_user_commits(gitquery_params.author_username, gitquery_params.since, gitquery_params.until)
 
     def get_repo_commits(self, repo: str, since: datetime.datetime=None, until: datetime.datetime=None) -> List[Commit]:
         return self._get_repo_commits(repo, since, until)

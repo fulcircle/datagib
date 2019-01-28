@@ -1,4 +1,4 @@
-import React, {ChangeEvent, Component, ReactElement, ReactNode} from 'react';
+import React, {ChangeEvent, Component, ReactNode} from 'react';
 import './Datagib.scss';
 import {Api} from "./api/Api";
 import {Commit} from "./data/Commit.interface";

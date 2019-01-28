@@ -23,7 +23,7 @@ export class QueryParser {
     );
 
     emailRegexp = new RegExp(
-        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        /(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/
     );
 
     userRegexp = new RegExp(
@@ -42,6 +42,7 @@ export class QueryParser {
 
         let author_username = this._matches(this.userRegexp, 1);
         let author_email = this._matches(this.emailRegexp);
+        console.log(author_email);
 
         authorInfo = {author_email: author_email, author_username: author_username};
 
