@@ -3,6 +3,7 @@ import './Datagib.scss';
 import {Api} from "./api/Api";
 import {Commit} from "./data/Commit.interface";
 import {QueryParser} from "./classes/QueryParser";
+import moment from 'moment';
 
 
 type State = {
@@ -84,6 +85,25 @@ class Datagib extends Component<{}, State> {
         return this.state.commits.length > 0;
     }
 
+    commitClick(commit:Commit) {
+        let url = commit.url
+            .replace('https://api.', "https://")
+            .replace("repos/", "")
+            .replace("commits/", "commit/");
+
+        window.open(url, '_blank');
+    }
+
+    userClick(event: MouseEvent, commit: Commit) {
+        event.stopPropagation();
+        window.open(commit.user_url, "_blank");
+    }
+
+    repoClicked(event: MouseEvent, commit: Commit) {
+        event.stopPropagation();
+        window.open(commit.repo_url, "_blank");
+    }
+
 
     render() {
 
@@ -98,15 +118,16 @@ class Datagib extends Component<{}, State> {
                 } else if (commit.author_email) {
                     name = commit.author_email;
                 }
-                return <div className="result" key={idx}>
-                    <img className="avatar" src={commit.user_avatar_url}/>
+                return <div className="result" key={idx} onClick={() => this.commitClick(commit) }>
+                        <img className="avatar" src={commit.user_avatar_url} onClick={(event: any) => this.userClick(event, commit)}/>
                     <div className="result__commit">
                         <div className="result__message">
                             {commit.message}
                         </div>
                         <div className="result__commit_info">
-                            {name} committed to <a href={commit.repo_url}
-                                                   target="_blank">{commit.repo}</a> on {commit.date}
+                            <span className="user_link" onClick={(event: any) => this.userClick(event, commit)}>{name}</span> committed to&nbsp;
+                            <span className="repo_link" onClick={(event: any) => this.repoClicked(event, commit)}>{commit.repo}</span>&nbsp;
+                                on {moment(commit.date).local().format('MMM Do, YYYY')}
                         </div>
                     </div>
                 </div>
@@ -121,7 +142,7 @@ class Datagib extends Component<{}, State> {
                             datagib
                         </div>
                         <div className="subtitle">
-                            search for Github commits using English
+                            search for github commits using english
                         </div>
                         <input
                             disabled={this.state.searching}

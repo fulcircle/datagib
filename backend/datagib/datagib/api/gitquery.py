@@ -132,12 +132,12 @@ class GitHubCommitSearchQuery:
             c.author_name = commit_author.name
 
             if github_user:
-                c.user_url = github_user.url
+                c.user_url = github_user.html_url
                 c.user_avatar_url = github_user.avatar_url
 
-            c.url = git_commit.url
+            c.url = git_commit.html_url
             c.repo = github_repo.name
-            c.repo_url = github_repo.url
+            c.repo_url = github_repo.html_url
             c.date = commit_author.date
 
             commits.append(c)

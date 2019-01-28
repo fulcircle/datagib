@@ -3,6 +3,10 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
+.img_link {
+  height: 100%;
+}
+
 .datagib_container {
   min-width: 1100px;
   max-width: 1800px;
@@ -29,7 +33,6 @@ body {
   font-style: italic;
   font-size: 14px;
 }
-
 input {
   border: 0;
   outline: none;
@@ -73,7 +76,7 @@ input {
 }
 
 .result__commit_info {
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .result__message {
@@ -104,6 +107,11 @@ input {
 
 .avatar {
   height: 100%;
+}
+
+.repo_link, .user_link {
+  font-weight: 600;
+  text-decoration: underline;
 }
 
 .spinner {
