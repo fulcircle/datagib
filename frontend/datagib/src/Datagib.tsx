@@ -142,7 +142,7 @@ class Datagib extends Component<{}, State> {
                             datagib
                         </div>
                         <div className="subtitle">
-                            search for github commits using english
+                            search for github commits using plain english
                         </div>
                         <input
                             disabled={this.state.searching}
