@@ -1,5 +1,5 @@
 # datagib [[demo](https://datagib.fulcircle.io)]
-### Search Github commits in plain english
+### Search for Github commits in plain english
 
 ![datagib screenshot](https://www.fulcircle.io/images/datagib.png)
 
