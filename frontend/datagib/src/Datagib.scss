@@ -74,6 +74,7 @@ input {
   width: 50%;
 
   @include mobile {
+    text-align: center;
     margin: auto;
     width: 90%;
   }
@@ -156,6 +157,7 @@ input {
   @include mobile {
     font-size: 25px;
     height: 40px;
+    max-width: 500px;
 
     &:focus, &:hover {
       height: 70px;
